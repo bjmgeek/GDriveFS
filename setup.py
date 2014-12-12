@@ -7,10 +7,11 @@ import gdrivefs
 
 _APP_PATH = os.path.dirname(gdrivefs.__file__)
 
-with open(os.path.join(_APP_PATH, 'resources', 'README.rst')) as f:
+with open(os.path.join(_APP_PATH, 'resources', 'README.rst'), encoding="utf-8") as f:
       long_description = f.read()
 
-with open(os.path.join(_APP_PATH, 'resources', 'requirements.txt')) as f:
+with open(os.path.join(_APP_PATH, 'resources', 'requirements.txt'),
+          encoding="utf-8") as f:
       install_requires = [s.strip() for s in f.readlines()]
 
 setuptools.setup(

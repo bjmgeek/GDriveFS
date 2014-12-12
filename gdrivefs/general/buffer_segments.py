@@ -132,7 +132,7 @@ class BufferSegments(object):
 
                 stop_offset = offset + data_len
                 seg_stop = seg_index
-                while 1:
+                while True:
                     # Since the insertion offset must be within the given data 
                     # (otherwise it'd be an append, above), it looks like we're 
                     # inserting into the last segment.

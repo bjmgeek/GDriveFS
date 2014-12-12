@@ -4,7 +4,7 @@ import dateutil.parser
 import random
 import json
 import time
-import httplib
+import http.client
 import ssl
 import tempfile
 import pprint
@@ -59,7 +59,7 @@ def _marshall(f):
         for n in range(0, 5):
             try:
                 return f(*args, **kwargs)
-            except (ssl.SSLError, httplib.BadStatusLine) as e:
+            except (ssl.SSLError, http.client.BadStatusLine) as e:
                 # These happen sporadically. Use backoff.
                 _logger.exception("There was a transient connection "
                                   "error (%s). Trying again [%s]: %s",
@@ -180,8 +180,8 @@ class _GdriveManager(object):
         self.__auth = GdriveAuth()
 
     def __assert_response_kind(self, response, expected_kind):
-        actual_kind = response[u'kind']
-        if actual_kind != unicode(expected_kind):
+        actual_kind = response['kind']
+        if actual_kind != str(expected_kind):
             raise ValueError("Received response of type [%s] instead of "
                              "[%s]." % (actual_kind, expected_kind))
 
@@ -211,31 +211,31 @@ class _GdriveManager(object):
 
         self.__assert_response_kind(response, 'drive#changeList')
 
-        items = response[u'items']
+        items = response['items']
 
         if items:
             _logger.debug("We received (%d) changes to apply.", len(items))
 
-        largest_change_id = int(response[u'largestChangeId'])
-        next_page_token = response.get(u'nextPageToken')
+        largest_change_id = int(response['largestChangeId'])
+        next_page_token = response.get('nextPageToken')
 
         changes = []
         last_change_id = None
         for item in items:
-            change_id = int(item[u'id'])
-            entry_id = item[u'fileId']
+            change_id = int(item['id'])
+            entry_id = item['fileId']
 
-            if item[u'deleted']:
+            if item['deleted']:
                 was_deleted = True
                 entry = None
 
                 _logger.debug("CHANGE: [%s] (DELETED)", entry_id)
             else:
                 was_deleted = False
-                entry = item[u'file']
+                entry = item['file']
 
                 _logger.debug("CHANGE: [%s] [%s] (UPDATED)", 
-                              entry_id, entry[u'title'])
+                              entry_id, entry['title'])
 
             normalized_entry = None \
                                 if was_deleted \
@@ -258,7 +258,7 @@ class _GdriveManager(object):
         response = client.parents().list(fileId=child_id).execute()
         self.__assert_response_kind(response, 'drive#parentList')
 
-        return [ entry[u'id'] for entry in response[u'items'] ]
+        return [ entry['id'] for entry in response['items'] ]
 
     @_marshall
     def get_children_under_parent_id(self,
@@ -295,7 +295,7 @@ class _GdriveManager(object):
 
         self.__assert_response_kind(response, 'drive#childList')
 
-        return [ entry[u'id'] for entry in response[u'items'] ]
+        return [ entry['id'] for entry in response['items'] ]
 
     @_marshall
     def get_entries(self, entry_ids):
@@ -365,7 +365,7 @@ class _GdriveManager(object):
         page_token = None
         page_num = 0
         entries = []
-        while 1:
+        while True:
             _logger.debug("Doing request for listing of files with page-"
                           "token [%s] and page-number (%d): %s",
                           page_token, page_num, query)
@@ -376,26 +376,26 @@ class _GdriveManager(object):
             self.__assert_response_kind(result, 'drive#fileList')
 
             _logger.debug("(%d) entries were presented for page-number "
-                          "(%d).", len(result[u'items']), page_num)
+                          "(%d).", len(result['items']), page_num)
 
-            for entry_raw in result[u'items']:
+            for entry_raw in result['items']:
                 try:
                     entry = NormalEntry('list_files', entry_raw)
                 except:
                     _logger.exception("Could not normalize raw-data for entry "
-                                      "with ID [%s].", entry_raw[u'id'])
+                                      "with ID [%s].", entry_raw['id'])
                     raise
 
                 entries.append(entry)
 
-            if u'nextPageToken' not in result:
+            if 'nextPageToken' not in result:
                 _logger.debug("No more pages in file listing.")
                 break
 
             _logger.debug("Next page-token in file-listing is [%s].", 
-                          result[u'nextPageToken'])
+                          result['nextPageToken'])
 
-            page_token = result[u'nextPageToken']
+            page_token = result['nextPageToken']
             page_num += 1
 
         return entries
@@ -416,7 +416,7 @@ class _GdriveManager(object):
             message = ("Entry with ID [%s] can not be exported to type [%s]. "
                        "The available types are: %s" % 
                        (normalized_entry.id, mime_type, 
-                        ', '.join(normalized_entry.download_links.keys())))
+                        ', '.join(list(normalized_entry.download_links.keys()))))
 
             _logger.warning(message)
             raise ExportFormatError(message)
@@ -462,7 +462,7 @@ class _GdriveManager(object):
 
             progresses = []
 
-            while 1:
+            while True:
                 status, done, total_size = downloader.next_chunk()
                 assert status.total_size is not None, \
                        "total_size is None"

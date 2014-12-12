@@ -67,10 +67,10 @@ dr = DownloadRequest(typed_entry=te,
                      expected_mtime_dt=mtime_dt)
 
 with dae.sync_to_local(dr) as f:
-    print("Yielded: %s" % (f))
+    print(("Yielded: %s" % (f)))
 
 try:
-    while 1:
+    while True:
         sleep(1)
 except KeyboardInterrupt:
     print("Test loop has ended.")

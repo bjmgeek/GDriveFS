@@ -44,15 +44,15 @@ class GetDriveTestCase(TestCase):
 
         (largest_change_id, next_page_token, changes) = drive_proxy('list_changes')
 
-        print("Largest Change ID: [%s]" % (largest_change_id))
-        print("Next Page Token: [%s]" % (next_page_token))
+        print(("Largest Change ID: [%s]" % (largest_change_id)))
+        print(("Next Page Token: [%s]" % (next_page_token)))
 
         from pprint import pprint
         pprint(len(changes))
-        print
+        print()
 
-        for change_id, (entry_id, was_deleted, entry) in changes.iteritems():
-            print("%d> [%s] D:[%s] [%s]" % (change_id, entry_id, was_deleted, entry.title if entry else '<deleted>'))
+        for change_id, (entry_id, was_deleted, entry) in changes.items():
+            print(("%d> [%s] D:[%s] [%s]" % (change_id, entry_id, was_deleted, entry.title if entry else '<deleted>')))
 
 #            pprint(change_id)
 #            pprint(change_info)
@@ -65,7 +65,7 @@ class GetDriveTestCase(TestCase):
 
         return
         
-        entry_id = u'11EIs1ZxCykme0FnAdY8Xm_ktUCQ9y5lHC3EwAKFsiFk'
+        entry_id = '11EIs1ZxCykme0FnAdY8Xm_ktUCQ9y5lHC3EwAKFsiFk'
 
         try:
             parent_ids = drive_proxy('get_parents_containing_id', 
@@ -93,7 +93,7 @@ class GetDriveTestCase(TestCase):
         return
 
         from pprint import pprint
-        url = files[16].download_links[u'text/plain']
+        url = files[16].download_links['text/plain']
         pprint(url)
 
         data = http.request(url)
@@ -101,9 +101,9 @@ class GetDriveTestCase(TestCase):
 
         import re
         r = re.compile('Range')
-        found = [("%s: %s" % (k, v)) for k, v in response_headers.iteritems() if r.match(k)]
+        found = [("%s: %s" % (k, v)) for k, v in response_headers.items() if r.match(k)]
         if found:
-            print("Found: %s" % (", ".join(found)))
+            print(("Found: %s" % (", ".join(found))))
 
         print(">>>===============================================")
 #        print(data[1][:200])
@@ -113,11 +113,11 @@ class GetDriveTestCase(TestCase):
 
         return
 
-        entry_id_1 = u'11EIs1ZxCykme0FnAdY8Xm_ktUCQ9y5lHC3EwAKFsiFk'
+        entry_id_1 = '11EIs1ZxCykme0FnAdY8Xm_ktUCQ9y5lHC3EwAKFsiFk'
         entry1 = EntryCache.get_instance().cache.get(entry_id_1)
 #        result = PathRelations.get_instance().register_entry(entry1)
 
-        entry_id_2 = u'0AJFt2OXeDBqSUk9PVA'
+        entry_id_2 = '0AJFt2OXeDBqSUk9PVA'
 #        entry2 = EntryCache.get_instance().cache.get(entry_id_2)
 #        result = PathRelations.get_instance().register_entry(entry2)
 
@@ -171,9 +171,9 @@ class GetDriveTestCase(TestCase):
 
         filenames = path_relations.get_child_filenames_from_entry_id(entry_clause[3])
         
-        root_id = u'0AJFt2OXeDBqSUk9PVA'
+        root_id = '0AJFt2OXeDBqSUk9PVA'
         middle_id = entry_clause[3]
-        child_id = u'0B5Ft2OXeDBqSTmpjSHlVbEV5ajg'
+        child_id = '0B5Ft2OXeDBqSTmpjSHlVbEV5ajg'
 
 #        from pprint import pprint
 #        pprint(filenames)
@@ -218,7 +218,7 @@ class GetDriveTestCase(TestCase):
         filename = ("NewFile_%s.txt" % (datetime.datetime.now().strftime("%H%M%S")))
         entry = drive_proxy('create_file', filename=filename, data_filepath='/tmp/tmpdata.txt', parents=[])
 
-        print(entry.id)
+        print((entry.id))
 
 if __name__ == '__main__':
     main()

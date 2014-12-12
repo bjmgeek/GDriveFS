@@ -26,11 +26,11 @@ print("Before:\n")
 (entry, path, filename) = gdrivefs.gdfs.gdfuse.get_entry_or_raise(
                             '/20140426-171136')
 
-print(entry.modified_date)
-print(entry.modified_date.utctimetuple())
-print(entry.modified_date_epoch)
+print((entry.modified_date))
+print((entry.modified_date.utctimetuple()))
+print((entry.modified_date_epoch))
 
-print("From epoch: %s" % (get_phrase(entry.modified_date_epoch)))
+print(("From epoch: %s" % (get_phrase(entry.modified_date_epoch))))
 
 print("\nSending:\n")
 
@@ -40,7 +40,7 @@ now = time.time()
 mtime_phrase = gdrivefs.time_support.get_flat_normal_fs_time_from_epoch(mtime)
 atime_phrase = gdrivefs.time_support.get_flat_normal_fs_time_from_epoch(atime)
 
-print("mtime: %s" % (mtime_phrase))
+print(("mtime: %s" % (mtime_phrase)))
 
 entry = gdrivefs.gdtool.drive.drive_proxy('update_entry', 
             normalized_entry=entry, 
@@ -49,10 +49,10 @@ entry = gdrivefs.gdtool.drive.drive_proxy('update_entry',
 
 print("\nAfter:\n")
 
-print(entry.modified_date)
-print(entry.modified_date_epoch)
+print((entry.modified_date))
+print((entry.modified_date_epoch))
 
-print("From epoch: %s" % (get_phrase(entry.modified_date_epoch)))
+print(("From epoch: %s" % (get_phrase(entry.modified_date_epoch))))
 
 print("Done.")
 
